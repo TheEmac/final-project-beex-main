@@ -194,6 +194,29 @@ public class LevelOne extends GraphicsPane implements Interfaceable {
 		groundSensorGraphic.sendToFront();
 	}
 
+	private boolean isGroundSensorTouching() {
+	    // Get sensor bounds
+	    double sensorX = playerBody.getWorldCenter().x - 14; // half-width offset
+	    double sensorY = playerBody.getWorldCenter().y - 16 - 3; // bottom of feet minus small epsilon
+	    double sensorWidth = 28;
+	    double sensorHeight = 4;
+
+	    // Loop through all obstacles (they have bodies in bodiesInLevel)
+	    for (Body b : bodiesInLevel) {
+	        AABB aabb = b.createAABB();
+	        double minX = aabb.getMinX();
+	        double maxX = aabb.getMaxX();
+	        double minY = aabb.getMinY();
+	        double maxY = aabb.getMaxY();
+
+	        // Check for overlap between sensor and obstacle AABB
+	        if (sensorX + sensorWidth > minX && sensorX < maxX &&
+	            sensorY + sensorHeight > minY && sensorY < maxY) {
+	            return true; // touching something solid
+	        }
+	    }
+	    return false; // nothing under sensor
+	}
 
 	public boolean winCheck() {
 		doorCheck = program.getElementAt(player.getX(), player.getY() - 2);
