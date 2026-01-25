@@ -63,6 +63,10 @@ public class LevelOne extends GraphicsPane implements Interfaceable {
 
 	private static final GImage PLAYER_ICON = new GImage("media/sprites/character/idle/right/char_idle1.png");
 
+	public void setDoubleJump(boolean enable) {
+	    this.allowDoubleJump = enable;
+	}
+	
 	public LevelOne(MainApplication app) {
 		super();
 		program = app;
@@ -180,7 +184,7 @@ public class LevelOne extends GraphicsPane implements Interfaceable {
 		playerBody.setMass(MassType.NORMAL);
 		playerBody.translate(50.0,-534.0);
 		playerBody.setGravityScale(1);
-		playerBody.setLinearDamping(1);
+		playerBody.setLinearDamping(0.1);
 		playerBody.setAtRest(false);
 
 		levelWorld.addBody(playerBody);
@@ -267,6 +271,9 @@ public class LevelOne extends GraphicsPane implements Interfaceable {
 		once = false;
 		createWorldBoundaries();
 		initializePlayerBody();
+		
+		
+		
 		levelTheme.start();
 		localTimer.start();
 		
@@ -399,20 +406,31 @@ public class LevelOne extends GraphicsPane implements Interfaceable {
 
 			if (moveRight) {
 				playerBody.setLinearVelocity(15.0,playerBody.getLinearVelocity().y);
-				playerBody.setLinearDamping(1);
+				playerBody.setLinearDamping(0.1);
 				if (grounded) {
+					playerBody.setLinearDamping(1);
 					player.anim.setAnim(AnimState.WALK_RIGHT);
 					player.sfx.walkSound();
 				}
 			}
 			if (moveLeft) {
 				playerBody.setLinearVelocity(-15.0,playerBody.getLinearVelocity().y );
-				playerBody.setLinearDamping(1);
+				playerBody.setLinearDamping(0.1);
 				if (grounded) {
+					playerBody.setLinearDamping(1);
 					player.anim.setAnim(AnimState.WALK_LEFT);
 					player.sfx.walkSound();
 				}
 			}
+			// Update grounded state
+			if (grounded != isGroundSensorTouching()) {
+				System.out.println(isGroundSensorTouching());
+			}
+			grounded = isGroundSensorTouching();
+			if (grounded) {
+			    airjump = true; // reset double jump when on ground
+			}
+			
 			if (jump && grounded) {
 				playerBody.setLinearDamping(0.1);
 				playerBody.setLinearVelocity(playerBody.getLinearVelocity().x ,45.0);
@@ -420,13 +438,13 @@ public class LevelOne extends GraphicsPane implements Interfaceable {
 				player.sfx.jumpSound();
 
 			}
-			if (jump && !grounded && airjump) {
-				playerBody.setLinearDamping(0.1);
-				playerBody.setLinearVelocity(playerBody.getLinearVelocity().x ,45.0);
-				airjump = false;
-				player.sfx.doubleJumpSound();
-
+			if (jump && !grounded && airjump && allowDoubleJump) {
+			    playerBody.setLinearDamping(0.1);
+			    playerBody.setLinearVelocity(playerBody.getLinearVelocity().x ,45.0);
+			    airjump = false;
+			    player.sfx.doubleJumpSound();
 			}
+			/*
 			if (playerBody.getLinearVelocity().y > -2 && playerBody.getLinearVelocity().y < 1) {
 				playerBody.setLinearDamping(1);
 				grounded = true;
@@ -436,6 +454,7 @@ public class LevelOne extends GraphicsPane implements Interfaceable {
 				playerBody.setLinearDamping(0.1);
 				grounded = false;
 			}
+			*/
 
 
 			levelWorld.update(1000,20);
