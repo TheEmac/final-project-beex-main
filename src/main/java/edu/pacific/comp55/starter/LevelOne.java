@@ -52,6 +52,11 @@ public class LevelOne extends GraphicsPane implements Interfaceable {
 	private GImage door;
 	private AnimationPlayer doorAnim;
 	
+	// Ground sensor
+	private GRect groundSensorGraphic;
+	
+	private boolean allowDoubleJump = true; // default ON
+	
 	private PauseMenu pauseMenu;
 	private boolean gameOver = false;
 	private int gameOverCount = 0;
@@ -180,6 +185,13 @@ public class LevelOne extends GraphicsPane implements Interfaceable {
 
 		levelWorld.addBody(playerBody);
 
+		// Visual Ground Sensor
+		groundSensorGraphic = new GRect(28, 4);
+		groundSensorGraphic.setFilled(true);
+		groundSensorGraphic.setColor(Color.RED);
+		groundSensorGraphic.setFillColor(Color.RED);
+		program.add(groundSensorGraphic);
+		groundSensorGraphic.sendToFront();
 	}
 
 
@@ -246,7 +258,23 @@ public class LevelOne extends GraphicsPane implements Interfaceable {
 
 	public void movePlayer() {
 		playerBody.setAtRest(false);
-		player.updateIconLocation(playerBody.getWorldCenter().x-16,-1*playerBody.getWorldCenter().y-16);
+
+		double px = playerBody.getWorldCenter().x;
+		double py = playerBody.getWorldCenter().y;
+
+		// Player sprite
+		player.updateIconLocation(px - 16, -py - 16);
+
+		// Ground sensor (bottom of feet)
+		groundSensorGraphic.setLocation(
+			px - 14,           // center align
+			(-py + 16) + 2     // just below feet
+		);
+		//groundSensorGraphic.setSize(60, 10);
+		groundSensorGraphic.sendToFront();
+		// GROUND SENSOR LOCATION System.out.println("Ground sensor added: " + groundSensorGraphic);
+		//System.out.println((px - 14) + " " + ((-py + 16) + 2));
+
 	}
 
 	@Override
