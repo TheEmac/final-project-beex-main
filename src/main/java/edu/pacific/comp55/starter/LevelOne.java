@@ -476,6 +476,11 @@ public class LevelOne extends GraphicsPane implements Interfaceable {
 			program.menuTheme.start();
 			program.switchToMenu();
 		}
+		if (obj == pauseMenu.airjump) {
+			setDoubleJump(!allowDoubleJump); // disables double jump
+			resumeGame();
+		} 
+		
 	}
 
 	public static void main(String[] args) {
