@@ -64,6 +64,9 @@ if (obj == pauseMenu.airjump) {
 	resume();
 } 
 
+Set of steps to check if the feature was done and implemented:
+Go to this URL: https://youtu.be/2KKmcBjwgYM
+Watch the video showing the two features.
 
 # Elemental Expedition
 Starter Project for Comp 55
